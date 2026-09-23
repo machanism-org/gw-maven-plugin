@@ -43,7 +43,7 @@ It serves as the main integration point, enabling Ghostwriter’s features and a
 6. Configuration
    - Include a table of common configuration parameters, with columns for parameter name, description, and default value.
    - Ensure descriptions are clear and concise.
-   - Explain how to enable debug logging for specific application components. (i.e., `-Dorg.slf4j.simpleLogger.log.[fully-qualified-class-name]=[LEVEL]`).
+   - Explain how to enable debug logging for specific application components. (i.e., `-Dorg.slf4j.simpleLogger.log.[fully-qualified-class_name]=[LEVEL]`).
 7. Resources
    - Provide a list of relevant links, including:
      - Official platform or documentation site
@@ -272,7 +272,7 @@ mvn -Dorg.slf4j.simpleLogger.log.org.machanism.machai.gw.processor=DEBUG gw:act 
 ```
 
 Replace the package with any fully qualified class name and use an appropriate level such as `TRACE`, `DEBUG`, `INFO`, `WARN`, or `ERROR`:
-`-Dorg.slf4j.simpleLogger.log.[fully-qualified-class-name]=[LEVEL]`.
+`-Dorg.slf4j.simpleLogger.log.[fully-qualified-class_name]=[LEVEL]`.
 
 ## Resources
 

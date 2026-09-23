@@ -8,7 +8,7 @@
  * <li>{@link org.machanism.machai.gw.maven.tools.ClassFunctionalTools} is the
  *     function-tool facade exposed to callers. It associates each registered
  *     Maven project base directory with a metadata holder and provides the
- *     {@code find-class} and {@code get-class-info} operations.</li>
+ *     {@code find_class} and {@code get_class_info} operations.</li>
  * <li>{@link org.machanism.machai.gw.maven.tools.ClassInfoHolder} owns the
  *     project-specific class loader, classpath scan, class-origin mappings, and
  *     source-path lookup logic.</li>

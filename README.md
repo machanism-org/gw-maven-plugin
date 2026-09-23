@@ -133,7 +133,7 @@ Enable targeted debug logging with Maven SimpleLogger by replacing the class nam
 mvn -Dorg.slf4j.simpleLogger.log.org.machanism.machai.gw.maven=DEBUG gw:gw
 ```
 
-The general form is `-Dorg.slf4j.simpleLogger.log.[fully-qualified-class-name]=[LEVEL]`.
+The general form is `-Dorg.slf4j.simpleLogger.log.[fully-qualified-class_name]=[LEVEL]`.
 
 ## Resources
 
