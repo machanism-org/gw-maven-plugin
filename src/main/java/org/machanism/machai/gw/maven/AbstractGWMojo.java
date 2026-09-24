@@ -3,6 +3,7 @@ package org.machanism.machai.gw.maven;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -19,6 +20,7 @@ import org.machanism.macha.core.commons.configurator.PropertiesConfigurator;
 import org.machanism.machai.ai.manager.UsageStatistics;
 import org.machanism.machai.ai.provider.AbstractAIProvider;
 import org.machanism.machai.gw.maven.tools.ClassFunctionalTools;
+import org.machanism.machai.gw.processor.AbstractFileProcessor;
 import org.machanism.machai.gw.processor.GWConstants;
 import org.machanism.machai.gw.processor.GuidanceProcessor;
 import org.slf4j.Logger;
@@ -223,8 +225,8 @@ public abstract class AbstractGWMojo extends AbstractMojo {
 	protected File configFile;
 
 	/**
-	 * Tool set exposed to the processor for class-related project introspection when
-	 * Maven is executing with a project.
+	 * Tool set exposed to the processor for class-related project introspection
+	 * when Maven is executing with a project.
 	 */
 	protected ClassFunctionalTools classFunctionTools = new ClassFunctionalTools();
 
@@ -240,9 +242,9 @@ public abstract class AbstractGWMojo extends AbstractMojo {
 	 *
 	 * <p>
 	 * Configuration is loaded first from the explicitly configured file, or from
-	 * the default workflow configuration file when no file is supplied. Values
-	 * from the selected Maven server and then {@link #params} are applied in that
-	 * order, so explicit plugin parameters take precedence over earlier sources.
+	 * the default workflow configuration file when no file is supplied. Values from
+	 * the selected Maven server and then {@link #params} are applied in that order,
+	 * so explicit plugin parameters take precedence over earlier sources.
 	 * </p>
 	 *
 	 * <p>
@@ -254,8 +256,8 @@ public abstract class AbstractGWMojo extends AbstractMojo {
 	 * @return a configurator containing the resolved workflow properties
 	 * @throws MojoExecutionException if a specified configuration file cannot be
 	 *                                loaded, Maven settings are unavailable for a
-	 *                                configured server id, or that server cannot
-	 *                                be found
+	 *                                configured server id, or that server cannot be
+	 *                                found
 	 */
 	protected PropertiesConfigurator getConfiguration() throws MojoExecutionException {
 
@@ -319,8 +321,8 @@ public abstract class AbstractGWMojo extends AbstractMojo {
 	 *
 	 * @param processor the non-null processor to configure and execute
 	 * @throws MojoExecutionException if project scanning or document processing
-	 *                                fails; the original failure is retained as
-	 *                                the exception cause
+	 *                                fails; the original failure is retained as the
+	 *                                exception cause
 	 */
 	protected void scanDocuments(GuidanceProcessor processor) throws MojoExecutionException {
 
@@ -329,7 +331,7 @@ public abstract class AbstractGWMojo extends AbstractMojo {
 			projectBasedir = SystemUtils.getUserDir();
 		}
 
-		processor.setExcludes(excludes);
+		applyExcludes(processor);
 
 		try {
 			if (instructions != null) {
@@ -360,6 +362,23 @@ public abstract class AbstractGWMojo extends AbstractMojo {
 		} finally {
 			UsageStatistics.logUsage();
 			logger.info("File processing finished.");
+		}
+	}
+
+	protected void applyExcludes(AbstractFileProcessor actProcessor) {
+		String[] effectiveExcludes = null;
+		String excludesStr = actProcessor.getConfigurator().get(GWConstants.EXCLUDES_PROP_NAME, null);
+		if (excludesStr != null) {
+			effectiveExcludes = StringUtils.split(excludesStr, ",");
+		}
+
+		if (effectiveExcludes == null) {
+			effectiveExcludes = this.excludes;
+		}
+
+		if (effectiveExcludes != null && effectiveExcludes.length > 0) {
+			logger.info("Excludes: {}", Arrays.toString(effectiveExcludes));
+			actProcessor.setExcludes(effectiveExcludes);
 		}
 	}
 
