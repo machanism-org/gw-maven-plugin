@@ -17,12 +17,12 @@ import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.machanism.macha.core.commons.configurator.PropertiesConfigurator;
-import org.machanism.machai.ai.manager.UsageStatistics;
-import org.machanism.machai.ai.provider.AbstractAIProvider;
 import org.machanism.machai.gw.maven.tools.ClassFunctionalTools;
 import org.machanism.machai.gw.processor.AbstractFileProcessor;
 import org.machanism.machai.gw.processor.GWConstants;
 import org.machanism.machai.gw.processor.GuidanceProcessor;
+import org.machanism.machai.process.manager.UsageStatistics;
+import org.machanism.machai.process.provider.AbstractAIProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

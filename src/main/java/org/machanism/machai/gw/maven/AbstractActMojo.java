@@ -20,13 +20,13 @@ import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
 import org.machanism.macha.core.commons.configurator.Configurator;
 import org.machanism.macha.core.commons.configurator.PropertiesConfigurator;
-import org.machanism.machai.ai.manager.UsageStatistics;
-import org.machanism.machai.ai.provider.AbstractAIProvider;
 import org.machanism.machai.gw.processor.AIFileProcessor;
 import org.machanism.machai.gw.processor.ActProcessor;
 import org.machanism.machai.gw.processor.GWConstants;
 import org.machanism.machai.gw.processor.Ghostwriter;
 import org.machanism.machai.gw.tools.ProcessTerminationException;
+import org.machanism.machai.process.manager.UsageStatistics;
+import org.machanism.machai.process.provider.AbstractAIProvider;
 import org.machanism.machai.project.layout.MavenProjectLayout;
 import org.machanism.machai.project.layout.ProjectLayout;
 

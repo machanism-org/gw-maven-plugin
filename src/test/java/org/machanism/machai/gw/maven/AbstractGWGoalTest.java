@@ -19,8 +19,8 @@ import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.junit.jupiter.api.Test;
 import org.machanism.macha.core.commons.configurator.PropertiesConfigurator;
-import org.machanism.machai.ai.provider.AbstractAIProvider;
 import org.machanism.machai.gw.processor.GuidanceProcessor;
+import org.machanism.machai.process.provider.AbstractAIProvider;
 
 public class AbstractGWGoalTest {
 

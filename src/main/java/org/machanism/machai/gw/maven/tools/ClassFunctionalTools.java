@@ -15,9 +15,9 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.apache.maven.project.MavenProject;
-import org.machanism.machai.ai.tools.FunctionTools;
-import org.machanism.machai.ai.tools.Param;
-import org.machanism.machai.ai.tools.Tool;
+import org.machanism.machai.process.tools.FunctionTools;
+import org.machanism.machai.process.tools.Param;
+import org.machanism.machai.process.tools.Tool;
 
 /**
  * Provides function-tool integrations for discovering Java classes and reading
