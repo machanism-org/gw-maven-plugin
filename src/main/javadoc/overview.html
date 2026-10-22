@@ -9,25 +9,27 @@
 
     <p>
       GW Maven Plugin is an advanced documentation automation tool for Java
-      projects. It scans, analyzes, and assembles project documentation using
-      embedded guidance tags and AI-powered synthesis, helping maintain
-      consistent, current documentation across project modules.
+      projects. It automatically scans, analyzes, and assembles project
+      documentation using embedded guidance tags and AI-powered synthesis. The
+      plugin streamlines the creation and maintenance of high-quality,
+      consistent documentation across all modules.
     </p>
     <p>
-      GW Maven Plugin supports all types of project files, including source
-      code, documentation, project site content, and other relevant files. Its
-      Maven goals derive Ghostwriter configuration from Maven properties, mojo
-      parameters, project settings, and, when configured, credentials and
-      custom settings from a Maven <code>settings.xml</code> server entry. The
-      goals then run guidance-driven processing or an explicitly selected act
-      over the requested project tree.
+      GW Maven Plugin supports all types of project files, including
+      source code, documentation, project site content, and other relevant
+      files. Its Maven goals derive Ghostwriter configuration from Maven
+      properties, mojo parameters, project settings, and, when configured,
+      credentials and custom settings from a Maven <code>settings.xml</code>
+      server entry. The goals then run guidance-driven processing or an
+      explicitly selected act over the requested project tree.
     </p>
 
     <h2>Architecture and usage</h2>
     <p>
-      The Maven integration package provides shared goal infrastructure for
-      Maven context, configuration, scan paths, instructions, exclusions,
-      provider settings, and reporting. <code>GWMojo</code> and
+      The <code>org.machanism.machai.gw.maven</code> package provides shared
+      goal infrastructure for Maven context, configuration, scan paths,
+      instructions, exclusions, provider settings, and reporting.
+      <code>GWMojo</code> and
       <code>GWPerModuleMojo</code> locate files containing Ghostwriter guidance
       comments and execute their workflows. <code>ActMojo</code> and
       <code>ActPerModuleMojo</code> resolve a named act or inline prompt and
@@ -39,7 +41,10 @@
       are non-aggregating and rely on Maven reactor scheduling for selected
       modules. Common base classes centralize Maven parameter binding and
       processor setup, so both execution models use the same provider
-      configuration, exclusions, instructions, and project-aware tools.
+      configuration, exclusions, instructions, and project-aware tools. The
+      <code>org.machanism.machai.gw.maven.tools</code> package supplies the
+      class-discovery facade and project-specific metadata holder used when a
+      Maven project is available.
     </p>
     <p>
       When a Maven project is available, the integration registers class

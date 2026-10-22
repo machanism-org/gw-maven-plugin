@@ -1,14 +1,15 @@
 /* @guidance: >>> ${guidances}/package-info-javadoc.md */
 /**
  * Supplies Maven-integrated function tools for discovering Java classes and
- * inspecting their reflective metadata.
+ * inspecting their reflective metadata for a registered project.
  *
  * <p>The package is organized around two collaborating types:</p>
  * <ul>
  * <li>{@link org.machanism.machai.gw.maven.tools.ClassFunctionalTools} is the
  *     function-tool facade exposed to callers. It associates each registered
  *     Maven project base directory with a metadata holder and provides the
- *     {@code find_class} and {@code get_class_info} operations.</li>
+ *     {@code find_class} and {@code get_class_info} operations. A project must
+ *     be registered before either operation can resolve classes.</li>
  * <li>{@link org.machanism.machai.gw.maven.tools.ClassInfoHolder} owns the
  *     project-specific class loader, classpath scan, class-origin mappings, and
  *     source-path lookup logic.</li>
@@ -41,7 +42,8 @@
  * declared non-private fields and methods, all declared constructors,
  * annotations, and any available path, artifact, and source metadata. The
  * reflective member lists describe declarations on the requested class rather
- * than inherited members.</p>
+ * than inherited members; fields and methods with private visibility are
+ * omitted, while private constructors are included.</p>
  *
  * <h2>Typical usage</h2>
  * <pre>
@@ -51,6 +53,10 @@
  * Map&lt;String, Object&gt; metadata = tools.getClassInfo(matches.get(0),
  *         project.getBasedir());
  * </pre>
+ *
+ * <p>After changing a project's dependencies or compiled output, call
+ * {@link org.machanism.machai.gw.maven.tools.ClassFunctionalTools#scanProjectClasses(org.apache.maven.project.MavenProject)}
+ * again so that later requests use refreshed classpath and origin metadata.</p>
  *
  * @see org.machanism.machai.gw.maven.tools.ClassFunctionalTools
  * @see org.machanism.machai.gw.maven.tools.ClassInfoHolder

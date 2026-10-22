@@ -365,6 +365,20 @@ public abstract class AbstractGWMojo extends AbstractMojo {
 		}
 	}
 
+	/**
+	 * Applies exclusion patterns from the processor configuration, falling back to
+	 * the exclusions supplied directly to this mojo when the configuration does not
+	 * define any.
+	 *
+	 * <p>
+	 * Comma-separated configuration values are split before being passed to the
+	 * processor. If exclusions are available, they are logged and applied in their
+	 * original order.
+	 * </p>
+	 *
+	 * @param actProcessor processor whose configuration and exclusion rules are to
+	 *                     be updated
+	 */
 	protected void applyExcludes(AbstractFileProcessor actProcessor) {
 		String[] effectiveExcludes = null;
 		String excludesStr = actProcessor.getConfigurator().get(GWConstants.EXCLUDES_PROP_NAME, null);

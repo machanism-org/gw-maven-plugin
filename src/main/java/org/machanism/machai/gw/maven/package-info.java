@@ -1,96 +1,89 @@
 /* @guidance: >>> ${guidances}/package-info-javadoc.md */
 /**
- * Provides the Maven-plugin integration layer for Machai Ghostwriter workflows.
+ * Provides the Maven-plugin integration layer for Machai Ghostwriter.
  *
- * <p>The package exposes Maven goals that configure Ghostwriter from the active
- * Maven execution and then apply either guidance-driven processing or an explicit
- * act to project files. It bridges Maven's project, reactor, session, settings,
- * and dependency-resolution facilities to Ghostwriter processors, enabling
- * project-aware workflows while retaining support for aggregator execution outside
- * a {@code pom.xml}-based build.</p>
+ * <p>This package adapts Maven goal execution to Ghostwriter's guidance and act
+ * processors. It binds Maven parameters and execution context, resolves provider
+ * configuration from properties files and Maven {@code settings.xml}, selects
+ * the project paths to process, and supplies Maven project metadata to the
+ * processor layer. The package is intentionally an integration boundary: Maven
+ * lifecycle concerns remain here, while file traversal and workflow execution
+ * remain in the Ghostwriter processor packages.</p>
  *
  * <h2>Goal architecture</h2>
- * <p>{@link AbstractGWMojo} supplies the common integration behavior. It accepts
- * Maven context and configuration parameters, builds the effective Ghostwriter
- * configuration from properties, plugin parameters, and an optional Maven
- * {@code settings.xml} server, applies scan paths, instructions, and exclusions,
- * and reports usage. When Maven is executing a project, it also registers the
- * class-introspection tools supplied by the related
- * {@code org.machanism.machai.gw.maven.tools} package.</p>
+ * <p>{@link AbstractGWMojo} contains the shared configuration and scanning
+ * infrastructure. It accepts the model, path, instructions, excludes, server,
+ * settings, project, session, and configuration-file inputs; loads the selected
+ * properties file; optionally merges credentials and XML children from the
+ * selected Maven settings server; and finally applies explicit plugin
+ * parameters. Consequently, values supplied through {@code params} take
+ * precedence over values loaded earlier. It also registers
+ * {@code ClassFunctionalTools} when Maven supplies project context.</p>
  *
- * <p>Configuration is assembled from the selected Ghostwriter properties file,
- * an optional Maven {@code settings.xml} server entry, and plugin {@code params};
- * later sources override earlier values. The mojos then create the appropriate
- * processor, attach Maven-aware project-layout and class-introspection support
- * when a project is available, and delegate file traversal and workflow execution
- * to the processor layer. This separation keeps Maven parameter binding and
- * reactor integration in this package while the processor package owns guidance
- * and act execution.</p>
+ * <p>{@link GWMojo} and {@link GWPerModuleMojo} create
+ * {@code GuidanceProcessor} instances to find files containing Ghostwriter
+ * guidance comments and execute the associated workflows. The aggregator goal
+ * coordinates recursive project traversal itself, whereas the per-module goal
+ * disables nested processor traversal and lets Maven invoke the goal for each
+ * reactor module.</p>
  *
- * <p>{@link GWMojo} and {@link GWPerModuleMojo} create a
- * {@link org.machanism.machai.gw.processor.GuidanceProcessor} that locates files
- * containing Ghostwriter guidance comments and executes their workflows.
- * {@link AbstractActMojo} extends the shared infrastructure for an explicit
- * Ghostwriter act: it resolves an act name or inline prompt, can collect
- * multi-line interactive input, locates reusable act definitions, and delegates
- * processing to an {@link org.machanism.machai.gw.processor.ActProcessor}.
- * {@link ActMojo} implements the aggregator act goal; {@link AbstractActPerModuleMojo}
- * provides the reactor-aware behavior used by {@link ActPerModuleMojo}.</p>
- *
- * <h2>Public API relationships</h2>
- * <p>The concrete goal classes are intentionally thin Maven entry points:
- * {@link GWMojo} and {@link GWPerModuleMojo} run guidance discovery, while
- * {@link ActMojo} and {@link ActPerModuleMojo} run a selected act. Their shared
- * base classes centralize Maven parameter binding and processor setup so that
- * aggregator and per-module variants apply the same provider configuration,
- * exclusions, instructions, and project-aware tools. The accompanying
- * {@code org.machanism.machai.gw.maven.tools} package supplies the
- * class-information functions registered for executions that have Maven project
- * context.</p>
+ * <p>{@link AbstractActMojo} extends the shared infrastructure for explicit
+ * acts. It resolves an inline prompt or reusable act name, supports interactive
+ * multi-line input, applies the optional acts location, and delegates execution
+ * to {@code ActProcessor}. {@link ActMojo} exposes the aggregator
+ * {@code gw:act} goal. {@link AbstractActPerModuleMojo} provides the
+ * reactor-aware act behavior used by {@link ActPerModuleMojo}; that variant also
+ * suppresses nested module processing because Maven schedules the individual
+ * module executions.</p>
  *
  * <h2>Execution models</h2>
  * <dl>
  * <dt>{@code gw:gw} and {@code gw:act}</dt>
- * <dd>Thread-safe aggregator goals that can traverse a project tree, including a
- * multi-module tree, and do not require a {@code pom.xml}. Ghostwriter performs
- * traversal in reverse order, processing child modules before parent modules.
- * During a Maven parallel build, Ghostwriter coordinates that traversal.</dd>
+ * <dd>Thread-safe aggregator goals that can be invoked for a project tree and
+ * do not require a {@code pom.xml}. Ghostwriter performs recursive traversal in
+ * reverse project order, processing child modules before their parents. When a
+ * Maven build is parallel, the aggregator processor coordinates its configured
+ * worker threads.</dd>
  * <dt>{@code gw:gw-per-module} and {@code gw:act-per-module}</dt>
- * <dd>Thread-safe, non-aggregator goals invoked by Maven for every selected
- * reactor module. They suppress nested module traversal because Maven supplies
- * module scheduling in its standard dependency order.</dd>
+ * <dd>Thread-safe, non-aggregator goals that require a Maven project. Maven
+ * invokes them for eligible reactor modules according to the reactor dependency
+ * order, and each goal processes its current module without recursively entering
+ * child modules.</dd>
  * </dl>
  *
  * <h2>Configuration</h2>
- * <p>All goals support the common {@code gw.model}, {@code gw.path},
- * {@code gw.instructions}, {@code gw.excludes}, {@code genai.serverId}, and
- * {@code gw.config} properties, together with additional plugin configuration
- * entries through {@code params}. Act goals additionally accept {@code gw.act}
- * and {@code gw.acts}. A {@code genai.serverId} value selects a matching Maven
- * {@code settings.xml} server, whose credentials and custom XML configuration
- * become processor settings. In the absence of a server identifier, Ghostwriter
- * loads its default or explicitly selected properties file. Concrete mojo classes
- * document the complete parameter and plugin-XML forms.</p>
+ * <p>The shared goals support the Ghostwriter properties represented by
+ * {@code gw.model}, {@code gw.path}, {@code gw.instructions},
+ * {@code gw.excludes}, {@code genai.serverId}, and {@code gw.config}. Act goals
+ * additionally support {@code gw.act} and {@code gw.acts}. A server identifier
+ * selects a matching Maven {@code settings.xml} server; its username, password,
+ * and custom XML child values are copied into the processor configuration. If
+ * no server identifier is supplied, the configured properties file is used, or
+ * the default Ghostwriter configuration is attempted. Plugin {@code params}
+ * are applied last.</p>
  *
  * <h2>Usage examples</h2>
  * <pre>{@code
- * # Scan files containing Ghostwriter guidance comments.
+ * # Scan guidance-bearing files in the main source tree.
  * mvn gw:gw -Dgw.path=src/main/java -Dgw.instructions=docs/guidance.md
  *
- * # Execute either an inline action or a named act definition.
+ * # Execute an inline act or a reusable act definition.
  * mvn gw:act -Dgw.act="Add missing public API Javadocs"
- * mvn -T 4 gw:act -Dgw.act=review
+ * mvn -T 4 gw:act -Dgw.acts=acts -Dgw.act=review
  *
- * # Let Maven invoke a non-aggregator goal for selected reactor modules.
+ * # Let Maven invoke a goal for each selected reactor module.
  * mvn gw:gw-per-module -Dgw.path=src/main/java
  * mvn gw:act-per-module -Dgw.act=review
  *
- * # Resolve provider credentials from a Maven settings server.
+ * # Resolve provider credentials from settings.xml.
  * mvn gw:gw -Dgenai.serverId=my-ai-provider
  * }</pre>
  *
  * @see AbstractGWMojo
+ * @see AbstractActMojo
  * @see GWMojo
+ * @see GWPerModuleMojo
  * @see ActMojo
+ * @see ActPerModuleMojo
  */
 package org.machanism.machai.gw.maven;

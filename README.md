@@ -4,6 +4,20 @@
 
 [![Maven Central](https://img.shields.io/maven-central/v/org.machanism.machai/gw-maven-plugin.svg)](https://central.sonatype.com/artifact/org.machanism.machai/gw-maven-plugin) [![bindex](https://img.shields.io/badge/bindex-blue.svg)](https://raw.githubusercontent.com/machanism-org/gw-maven-plugin/refs/heads/main/bindex.json)
 
+## Cloning and Getting Started
+
+To clone and set up this project locally, follow these steps:
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/machanism-org/gw-maven-plugin.git
+   cd gw-maven-plugin
+   ```
+2. **Build the project using Maven:**
+   ```bash
+   mvn clean install
+   ```
+
 The **GW Maven Plugin** is the primary Maven adapter for the [Machai Ghostwriter application](https://machai.machanism.org/ghostwriter/index.html). It integrates guided, AI-assisted processing into Maven projects so teams can analyze and maintain source code, tests, documentation, site content, configuration, and other relevant project files.
 
 ## Introduction

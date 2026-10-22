@@ -42,6 +42,8 @@ public abstract class AbstractActPerModuleMojo extends AbstractActMojo {
 	 *                  the configured prompt
 	 * @throws MojoExecutionException if configuration, prompting, or processing
 	 *                                fails
+	 * @throws ProcessTerminationException if processing requests termination with a
+	 *                                    non-zero exit code
 	 */
 	public void performAct(String actPrompt) throws MojoExecutionException {
 		UsageStatistics.init();
