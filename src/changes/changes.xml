@@ -20,5 +20,10 @@
       <action dev="dev" type="update">Class Diagnostics: Improved class information retrieval through get_class_info.</action>
       <action dev="dev" type="update">Logging: Improved log output, including default model and thread-count messages.</action>
     </release>
+
+    <release version="1.4.2" date="2026-10-23" description="Updates class inspection interfaces and Maven process tool integrations.">
+      <action dev="dev" type="update">Renamed class inspection tool names and parameters to use consistent underscore conventions.</action>
+      <action dev="dev" type="update">Updated Maven process tool integrations to use the revised process manager and provider packages.</action>
+    </release>
   </body>
 </document>
