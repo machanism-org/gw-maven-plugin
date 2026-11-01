@@ -266,7 +266,7 @@ public abstract class AbstractGWMojo extends AbstractMojo {
 		try {
 			String configPath = configFile != null ? configFile.getAbsolutePath() : GWConstants.GW_CONFIG_FILE_NAME;
 			config.setConfiguration(configPath);
-			logger.info("Configuration successfully loaded from: " + configPath);
+			logger.info("Custom configuration: {}", configPath);
 		} catch (IOException e) {
 			if (configFile != null) {
 				throw new MojoExecutionException("Failed to load configuration from: " + configFile, e);
