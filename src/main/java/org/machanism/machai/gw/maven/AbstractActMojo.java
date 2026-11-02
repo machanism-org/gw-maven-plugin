@@ -261,7 +261,7 @@ public abstract class AbstractActMojo extends AbstractGWMojo {
 			configureAndScan(actProcessor, actPrompt);
 
 		} catch (IOException e) {
-			getLog().error("I/O error occurred during file processing: " + e.getMessage());
+			getLog().error("Processing failed.", e);
 			throw new MojoExecutionException("I/O error occurred during file processing", e);
 
 		} finally {
