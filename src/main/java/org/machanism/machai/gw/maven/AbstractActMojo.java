@@ -274,21 +274,21 @@ public abstract class AbstractActMojo extends AbstractGWMojo {
 	 * available.
 	 *
 	 * @param actProcessor the act processor that receives the resolved act
-	 * @param savedAct     configured act prompt, or {@code null} to resolve one
+	 * @param prompt     configured act prompt, or {@code null} to resolve one
 	 * @throws MojoExecutionException if interactive prompt collection fails
 	 * @throws IOException            if document scanning fails
 	 */
-	public void configureAndScan(ActProcessor actProcessor, String savedAct)
+	public void configureAndScan(ActProcessor actProcessor, String prompt)
 			throws MojoExecutionException, IOException {
-		if (savedAct == null) {
+		if (prompt == null) {
 			applyActPrompt(actProcessor.getConfigurator());
 			Properties userProperties = session.getUserProperties();
-			savedAct = userProperties.getProperty(GWConstants.ACT_PROP_NAME);
+			prompt = userProperties.getProperty(GWConstants.ACT_PROP_NAME);
 		} else {
-			logger.info("Act: {}", savedAct);
+			logger.info("Act: {}", prompt);
 		}
-		actProcessor.setAct(savedAct);
-		if (savedAct != null) {
+		actProcessor.setAct(prompt);
+		if (prompt != null) {
 			scanDocuments(actProcessor);
 		}
 	}

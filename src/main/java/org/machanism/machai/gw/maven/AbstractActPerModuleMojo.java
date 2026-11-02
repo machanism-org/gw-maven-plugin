@@ -119,6 +119,11 @@ public abstract class AbstractActPerModuleMojo extends AbstractActMojo {
 
 			try {
 				process(actProcessor, actPrompt);
+				
+				if(actPrompt == null) {
+					actProcessor.setInteractive(true);
+					process(actProcessor, null);
+				}
 			} catch (ProcessTerminationException e) {
 				if (e.getExitCode() != 0) {
 					throw e;
