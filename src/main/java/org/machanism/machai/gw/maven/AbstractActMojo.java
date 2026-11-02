@@ -274,7 +274,7 @@ public abstract class AbstractActMojo extends AbstractGWMojo {
 	 * available.
 	 *
 	 * @param actProcessor the act processor that receives the resolved act
-	 * @param prompt     configured act prompt, or {@code null} to resolve one
+	 * @param prompt       configured act prompt, or {@code null} to resolve one
 	 * @throws MojoExecutionException if interactive prompt collection fails
 	 * @throws IOException            if document scanning fails
 	 */
@@ -290,6 +290,11 @@ public abstract class AbstractActMojo extends AbstractGWMojo {
 		actProcessor.setAct(prompt);
 		if (prompt != null) {
 			scanDocuments(actProcessor);
+
+			while (act == null) {
+				actProcessor.setInteractive(true);
+				scanDocuments(actProcessor);
+			}
 		}
 	}
 
