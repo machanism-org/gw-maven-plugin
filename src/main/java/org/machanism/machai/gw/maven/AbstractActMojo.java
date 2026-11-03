@@ -224,17 +224,25 @@ public abstract class AbstractActMojo extends AbstractGWMojo {
 		}
 
 		try {
+			UsageStatistics.init();
+
 			process(actProcessor, actPrompt);
 			while (actPrompt == null) {
 				Properties userProperties = session.getUserProperties();
 				userProperties.remove(GWConstants.ACT_PROP_NAME);
-				process(actProcessor, actPrompt);
+				try {
+					configureAndScan(actProcessor, actPrompt);
+				} catch (IOException e) {
+					getLog().error("Processing failed.", e);
+				}
 			}
 
 		} catch (ProcessTerminationException e) {
 			if (e.getExitCode() != 0) {
 				throw e;
 			}
+		} finally {
+			UsageStatistics.logUsage();
 		}
 	}
 
@@ -251,7 +259,6 @@ public abstract class AbstractActMojo extends AbstractGWMojo {
 	 */
 	protected void process(ActProcessor actProcessor, String actPrompt) throws MojoExecutionException {
 		try {
-			UsageStatistics.init();
 			String actsLocation = this.acts;
 			if (actsLocation == null) {
 				actsLocation = actProcessor.getConfigurator().get(GWConstants.ACTS_LOCATION_PROP_NAME, null);
@@ -268,9 +275,6 @@ public abstract class AbstractActMojo extends AbstractGWMojo {
 		} catch (IOException e) {
 			getLog().error("Processing failed.", e);
 			throw new MojoExecutionException("I/O error occurred during file processing", e);
-
-		} finally {
-			UsageStatistics.logUsage();
 		}
 	}
 
@@ -297,7 +301,6 @@ public abstract class AbstractActMojo extends AbstractGWMojo {
 			scanDocuments(actProcessor);
 		}
 	}
-
 
 	/**
 	 * Ensures an act prompt is stored in Maven user properties. A configured value
