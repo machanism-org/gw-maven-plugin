@@ -231,6 +231,7 @@ public abstract class AbstractActMojo extends AbstractGWMojo {
 				Properties userProperties = session.getUserProperties();
 				userProperties.remove(GWConstants.ACT_PROP_NAME);
 				try {
+					actProcessor.setDefaultPrompt(null);
 					configureAndScan(actProcessor, actPrompt);
 				} catch (IOException e) {
 					getLog().error("Processing failed.", e);
