@@ -24,6 +24,7 @@ import org.machanism.machai.gw.processor.AIFileProcessor;
 import org.machanism.machai.gw.processor.ActProcessor;
 import org.machanism.machai.gw.processor.GWConstants;
 import org.machanism.machai.gw.processor.Ghostwriter;
+import org.machanism.machai.gw.tools.EndTaskException;
 import org.machanism.machai.gw.tools.ProcessTerminationException;
 import org.machanism.machai.process.manager.UsageStatistics;
 import org.machanism.machai.process.provider.AbstractAIProvider;
@@ -323,7 +324,7 @@ public abstract class AbstractActMojo extends AbstractGWMojo {
 						actValue = readText("Act");
 						if (Strings.CS.equals(actValue.toLowerCase().trim(),
 								AIFileProcessor.EXIT_SPECIAL_PROMPT_COMMAND)) {
-							return;
+							throw new EndTaskException("Operation cancelled by user.");
 						}
 					}
 					userProperties.setProperty(GWConstants.ACT_PROP_NAME, actValue);

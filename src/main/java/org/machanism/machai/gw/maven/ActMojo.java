@@ -5,6 +5,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.machanism.machai.gw.processor.ActProcessor;
+import org.machanism.machai.gw.tools.EndTaskException;
 
 /*@guidance:
  * # Generate detailed Javadoc documentation for the Maven plugin, including:
@@ -27,9 +28,9 @@ import org.machanism.machai.gw.processor.ActProcessor;
  *
  * <p>
  * This goal creates an {@link ActProcessor}, resolves configuration from Maven
- * parameters, user {@code configFile}, and Ghostwriter configuration files,
- * and then scans the selected path. The goal is an aggregator, is thread-safe,
- * and can run without a {@code pom.xml}. Its direct superclass,
+ * parameters, user {@code configFile}, and Ghostwriter configuration files, and
+ * then scans the selected path. The goal is an aggregator, is thread-safe, and
+ * can run without a {@code pom.xml}. Its direct superclass,
  * {@link AbstractActMojo}, supplies act resolution, interactive prompting, and
  * act scanning. The parent {@link AbstractGWMojo} supplies common Ghostwriter
  * parameters such as the base directory, model, path, instructions, excludes,
@@ -131,8 +132,8 @@ import org.machanism.machai.gw.processor.ActProcessor;
  * {@code <configuration><session>${session}</session></configuration>}.</li>
  * <li>{@code settings}: Maven settings, supplied by Maven from
  * {@code ${settings}}. The goal uses it to resolve the configured server; for
- * example, Maven injects {@code <settings>${settings}</settings>} when
- * the parameter is not overridden.</li>
+ * example, Maven injects {@code <settings>${settings}</settings>} when the
+ * parameter is not overridden.</li>
  * <li>{@code reactorProjects}: projects in the current reactor, supplied by
  * Maven from {@code ${reactorProjects}}; for example, Maven injects
  * {@code <reactorProjects>${reactorProjects}</reactorProjects>} for a
@@ -194,7 +195,11 @@ public class ActMojo extends AbstractActMojo {
 	 */
 	@Override
 	public void execute() throws MojoExecutionException {
-		performAct(act);
+		try {
+			performAct(act);
+		} catch (EndTaskException e) {
+			getLog().info(e.getMessage());
+		}
 	}
 
 }
