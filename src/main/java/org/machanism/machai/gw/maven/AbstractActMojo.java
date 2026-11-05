@@ -21,6 +21,7 @@ import org.codehaus.plexus.components.interactivity.PrompterException;
 import org.machanism.macha.core.commons.configurator.Configurator;
 import org.machanism.macha.core.commons.configurator.PropertiesConfigurator;
 import org.machanism.machai.gw.processor.AIFileProcessor;
+import org.machanism.machai.gw.processor.ActNotFoundException;
 import org.machanism.machai.gw.processor.ActProcessor;
 import org.machanism.machai.gw.processor.GWConstants;
 import org.machanism.machai.gw.processor.Ghostwriter;
@@ -234,8 +235,12 @@ public abstract class AbstractActMojo extends AbstractGWMojo {
 				try {
 					actProcessor.setDefaultPrompt(null);
 					configureAndScan(actProcessor, actPrompt);
-				} catch (IOException e) {
-					getLog().error("Processing failed.", e);
+				} catch (ActNotFoundException e) {
+					getLog().info("Act not found: " + e.getMessage());
+				} catch (ProcessTerminationException | EndTaskException e) {
+					throw e;
+				} catch (Exception e) {
+					getLog().info("Act processing failed.", e);
 				}
 			}
 
