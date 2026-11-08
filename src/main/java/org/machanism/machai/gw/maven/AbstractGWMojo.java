@@ -21,6 +21,7 @@ import org.machanism.machai.gw.maven.tools.ClassFunctionalTools;
 import org.machanism.machai.gw.processor.AbstractFileProcessor;
 import org.machanism.machai.gw.processor.GWConstants;
 import org.machanism.machai.gw.processor.GuidanceProcessor;
+import org.machanism.machai.gw.tools.EndTaskException;
 import org.machanism.machai.process.manager.UsageStatistics;
 import org.machanism.machai.process.provider.AbstractAIProvider;
 import org.slf4j.Logger;
@@ -290,7 +291,12 @@ public abstract class AbstractGWMojo extends AbstractMojo {
 
 			processor.scanDocuments(projectBasedir, path);
 			logger.info("Scanning finished.");
-
+		} catch (EndTaskException e) {
+			if (logger.isDebugEnabled()) {
+				logger.info("Task completed.", e);
+			} else {
+				logger.info("Task completed{}", e.getMessage() != null ? ": " + e.getMessage() : "");
+			}
 		} catch (Exception e) {
 			throw new MojoExecutionException("File processing failed.", e);
 
