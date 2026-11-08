@@ -74,8 +74,8 @@ For the `act` goal, you can use a predefined act by passing its name directly. F
 
 ```bash
 mvn gw:act -Dgw.act=review
-mvn gw:act '-Dgw.act="review Improve the API documentation"'
-mvn gw:act '-Dgw.act=>Add missing Javadocs to public classes'
+mvn gw:act -Dgw.act="review Improve the API documentation"
+mvn gw:act -Dgw.act=">Add missing Javadocs to public classes"
 ```
 
 The plugin serves as a Maven-facing orchestration layer that resolves the effective project and module layout, loads configuration, selects the scan path, registers optional class tools, and invokes `GuidanceProcessor` or `ActProcessor`. These processors then inspect and update requested project files through the configured AI provider. Maven settings can supply a provider server's username, password, and custom XML configuration. When no server ID is supplied, a local Ghostwriter properties configuration can be used.
@@ -132,7 +132,7 @@ When using Maven's server configuration mechanism, teams can centralize their AI
 
 Alternatively, configuration can be loaded from dedicated configuration files, either explicitly specified or discovered by convention. This approach suits teams who prefer file-based configuration management or need to share configurations across different tools.
 
-The plugin always allows runtime parameters to override any loaded configuration, ensuring that developers can adjust behavior for specific invocations without modifying persistent configuration.
+Configuration is loaded from the explicit properties file (or the default Ghostwriter configuration when no file is specified), then merged with the selected Maven server, and finally with plugin `params`; later sources override earlier ones. Individual goal options have their own resolution rules: configured model and exclusion values take precedence over the corresponding mojo values, while an explicit scan path takes precedence for act processing. Do not assume that every command-line option overrides a value in the effective configuration.
 
 ### Processing Flow and Intelligence
 
@@ -150,7 +150,7 @@ The plugin respects Maven's parallel execution capabilities. When Maven runs wit
 
 ### Interactive Capabilities
 
-The plugin recognizes that AI processing sometimes requires human input or clarification. It provides interactive modes where developers can be prompted for additional information during processing. This interaction is carefully coordinated to avoid confusion in parallel builds, ensuring that only one prompt appears at a time even when multiple threads are active.
+The plugin supports interactive act input through Maven's prompt service. Initial act resolution synchronizes access to shared Maven user properties so modules can reuse the resolved act. This is not a general guarantee that all processor prompts are serialized: the per-module act implementation explicitly disables processor interactive mode when Maven's concurrency is greater than one. Supply `gw.act` explicitly for unattended builds; the initial missing-act prompt can still be requested independently of the processor's interactive setting.
 
 Multi-line input is supported for complex instructions or prompts, allowing developers to provide detailed context or specifications when needed. The plugin handles the mechanics of collecting this input and passing it to the AI processor in a usable format.
 
@@ -183,15 +183,17 @@ The actual AI processing—understanding guidance comments, executing actions, g
 
 ### Prerequisites
 
-- JDK and Maven installed and available on `PATH`.
+- JDK and Maven installed and available on `PATH`, with `JAVA_HOME` pointing to the JDK used by Maven.
 - Network access to download Maven dependencies and reach the configured GenAI provider.
-- A Ghostwriter-compatible provider/model configuration. Credentials may be stored in Maven `settings.xml` rather than on the command line.
+- A Ghostwriter-compatible provider/model configuration and any credentials or service endpoint required by that provider. Credentials may be stored in Maven `settings.xml` rather than on the command line; select the server with `-Dgenai.serverId=my-ai-provider`.
+- For named acts, an accessible act definition at the processor's default location or a custom location supplied through `gw.acts`. Prompt-only acts do not require a named definition.
+- For Java introspection, compile the project first so its output classes are available; the goals resolve compile- and runtime-scoped dependencies but do not themselves run compilation.
 - A Maven project for the per-module goals and for the current `gw:gw` guidance implementation, which uses Maven project context while configuring module traversal. Although both aggregator goals are declared with `requiresProject = false`, `gw:act` is the aggregator implementation that explicitly supports processing a directory without a `pom.xml`.
 - A project path containing the files to process and, for guidance mode, guidance comments describing the intended changes.
 
 ### Java version
 
-This module sets `<maven.compiler.release>8</maven.compiler.release>`, so its published bytecode target is Java 8. The practical runtime requirement can be higher because Maven, the Ghostwriter libraries, the selected AI provider, and their transitive dependencies must all support the JDK used to run Maven. Use a current supported JDK when provider or dependency documentation requires one, while retaining Java 8 compatibility for the plugin's own compilation target.
+This module sets `<maven.compiler.release>8</maven.compiler.release>`, so its compilation target is Java 8. This is not a verified Java 8 runtime requirement: the practical minimum JDK is the highest minimum required by Maven, Ghostwriter, the selected provider, and their transitive dependencies. The module POM does not establish a single functional minimum JDK or minimum Maven version for that entire stack. Check the resolved dependency and provider requirements, use a supported JDK that satisfies them, and verify the installation with `mvn -version`.
 
 ### Basic usage
 
@@ -206,7 +208,7 @@ When the plugin is configured in the build, the shorter goal form is available:
 
 ```bash
 mvn gw:gw -Dgw.path=src -Dgw.excludes=target,node_modules
-mvn gw:act -Dgw.act='>Update the project documentation'
+mvn gw:act -Dgw.act=">Update the project documentation"
 ```
 
 For a build with several modules, use `mvn -T 4 gw:gw` or `mvn -T 4 gw:act` when parallel processing is appropriate. Use `gw:gw-per-module` or `gw:act-per-module` when each module should be handled by Maven's reactor.
@@ -230,7 +232,7 @@ The choice between project-wide and module-specific processing depends on the ta
 
 ## Configuration
 
-The following properties are the common command-line names used by the mojos. They can also be supplied in the plugin's `<configuration>` element where Maven parameter names are used.
+The table distinguishes Maven parameters from processor configuration settings and injected Maven context. Declared mojo parameters can be supplied in the plugin's `<configuration>` element using the parameter name in parentheses. Processor settings are not necessarily declared Maven parameters; supply them through the effective properties configuration or plugin `params` rather than assuming a `-D` switch is wired to a mojo field.
 
 | Parameter | Description | Default value |
 |---|---|---|
@@ -242,13 +244,13 @@ The following properties are the common command-line names used by the mojos. Th
 | `gw.config` (`configFile`) | Optional Ghostwriter properties configuration file. The plugin attempts its default Ghostwriter configuration file when this is unset; values from a configured `genai.serverId` server are then applied to the effective configuration. | Unset in the mojo; Ghostwriter's default configuration location is attempted. |
 | `gw.act` (`act`) | Predefined act name, act plus prompt text, or a prompt-only value beginning with `>`. | Unset; interactive input may be requested. |
 | `gw.acts` (`acts`) | Directory or URL containing predefined act definitions. | Act processor default location. |
-| `gw.interactive` (`interactive`) | Enables or disables interactive prompting when act configuration is incomplete. | Processor/configuration default. |
+| `gw.interactive` | Processor configuration setting, not a declared mojo parameter. The aggregator act goal reads it from effective configuration; it does not suppress the mojo's initial missing-act prompt. Per-module act processing disables processor interaction when Maven concurrency exceeds one. | Unset in the mojo; processor default unless configured. |
 | `gw.threads` | Internal processor setting for worker threads when an aggregator coordinates parallel module processing; normally use Maven's `-T` option instead. | Maven degree of concurrency when parallel execution is enabled; otherwise processor default. |
 | `gw.nonRecursive` | Internal/user-property setting that can disable recursive module traversal for act or per-module execution. | Derived from the Maven reactor context. |
 | `basedir` | Maven module base directory injected into the mojo. | Maven `${basedir}`. |
 | `project` | Current Maven project context used for layout and classpath metadata. | Maven `${project}` when a project is present. |
 | `session` | Maven session used for execution-root, reactor, and parallel-build context. | Maven `${session}`. |
-| `reactorProjects` | Read-only Maven reactor project list used during multi-module processing. | Maven `${reactorProjects}`. |
+| Reactor project context | The implementation reads reactor projects through `session.getAllProjects()`; it does not declare a `reactorProjects` mojo parameter. | Session project list, rather than a parameter injected from Maven `${reactorProjects}`. |
 | `params` | Additional key-value entries merged into the effective provider configuration. | Unset. |
 
 A Maven server entry may contain `username`, `password`, and provider-specific child configuration values:
@@ -267,7 +269,7 @@ A Maven server entry may contain `username`, `password`, and provider-specific c
 Enable targeted debug logging with Maven's SimpleLogger property. For example:
 
 ```bash
-mvn -Dorg.slf4j.simpleLogger.log.org.machanism.machai.gw.maven=DEBUG gw:gw
+mvn -Dorg.slf4j.simpleLogger.log.org.machanism.machai.gw.maven.AbstractGWMojo=DEBUG gw:gw
 mvn -Dorg.slf4j.simpleLogger.log.org.machanism.machai.gw.processor=DEBUG gw:act -Dgw.act=review
 ```
 
@@ -279,6 +281,8 @@ Replace the package with any fully qualified class name and use an appropriate l
 - [Machai Ghostwriter](https://machai.machanism.org/ghostwriter/index.html) — the application and processing platform.
 - [Guided File Processing](https://www.machanism.org/guided-file-processing/index.html) — the conceptual foundation.
 - [Machai documentation](https://machai.machanism.org/)
+- [GW Maven Plugin GitHub repository](https://github.com/machanism-org/gw-maven-plugin)
+- [GW Maven Plugin issue tracker](https://github.com/machanism-org/gw-maven-plugin/issues)
 - [Machai GitHub repository](https://github.com/machanism-org/machai)
 - [GW Maven Plugin on Maven Central](https://central.sonatype.com/artifact/org.machanism.machai/gw-maven-plugin)
 - [Maven plugin configuration guide](https://maven.apache.org/guides/mini/guide-configuring-plugins.html)
