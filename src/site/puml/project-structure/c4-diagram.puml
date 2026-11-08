@@ -14,7 +14,7 @@ LAYOUT_WITH_LEGEND()
 
 title gw-maven-plugin - C4 Component Diagram
 
-Person(developer, "Developer", "Invokes Maven goals and supplies act or guidance input.")
+Person(developer, "Developer", "Invokes Maven goals and supplies workflow instructions or act input.")
 
 System_Ext(maven, "Apache Maven", "Executes goals and provides project, session, settings, and execution context.")
 System_Ext(maven_reactor, "Maven Reactor", "Provides the module graph and dependency-ordered execution for per-module goals.")
@@ -25,15 +25,15 @@ System_Ext(ai_provider, "AI Provider", "External GenAI service used by the Guida
 System_Ext(project_files, "Project Files", "Source, test, documentation, configuration, and act-definition files scanned or updated by the plugin.")
 
 Container_Boundary(plugin, "gw-maven-plugin") {
-    Component(abstract_gw_mojo, "AbstractGWMojo", "Shared Maven Mojo", "Resolves common Maven parameters, provider configuration, settings credentials, scan options, class tools, and usage logging.")
-    Component(abstract_act_mojo, "AbstractActMojo", "Shared act Maven Mojo", "Extends AbstractGWMojo to resolve act prompts and definitions, configure ActProcessor, and collect interactive input.")
-    Component(abstract_act_per_module_mojo, "AbstractActPerModuleMojo", "Per-module act base", "Extends AbstractActMojo for Maven reactor module execution.")
-    Component(gw_mojo, "GWMojo", "Aggregator goal: gw", "Creates a GuidanceProcessor and coordinates guidance scanning across the execution root and Maven modules, including parallel processing.")
-    Component(act_mojo, "ActMojo", "Aggregator goal: act", "Creates an ActProcessor, resolves an act prompt or definition, and coordinates act execution, including interactive input and parallel processing.")
-    Component(gw_per_module_mojo, "GWPerModuleMojo", "Per-module goal", "Runs guidance processing for the current module in Maven reactor dependency order.")
-    Component(act_per_module_mojo, "ActPerModuleMojo", "Per-module goal: act-per-module", "Runs the act goal once for each Maven reactor module.")
-    Component(class_tools, "ClassFunctionalTools", "AI function-tool adapter", "Exposes class discovery and class-metadata functions to AI workflows and maintains metadata holders per Maven project.")
-    Component(class_info_holder, "ClassInfoHolder", "Class metadata index", "Lazily builds a project class loader and indexes visible classes, class paths, dependency coordinates, and project source paths.")
+    Component(abstract_gw_mojo, "AbstractGWMojo", "Shared Maven Mojo", "Resolves common Maven parameters and effective provider configuration, applies scan options, registers class tools, and logs usage.")
+    Component(abstract_act_mojo, "AbstractActMojo", "Shared act Maven Mojo", "Extends AbstractGWMojo to resolve act prompts and definitions, configure ActProcessor, and collect interactive input when needed.")
+    Component(abstract_act_per_module_mojo, "AbstractActPerModuleMojo", "Per-module act base", "Extends AbstractActMojo and limits act processing to the current eligible reactor module.")
+    Component(gw_mojo, "GWMojo", "Aggregator goal: gw", "Creates a GuidanceProcessor and coordinates guidance scanning across the execution root and discovered modules, including parallel processing.")
+    Component(act_mojo, "ActMojo", "Aggregator goal: act", "Creates an ActProcessor, resolves an act prompt or definition, and delegates act processing, including interactive input and parallel execution.")
+    Component(gw_per_module_mojo, "GWPerModuleMojo", "Per-module goal", "Runs guidance processing for the current module; Maven invokes it in reactor dependency order.")
+    Component(act_per_module_mojo, "ActPerModuleMojo", "Per-module goal: act-per-module", "Runs act processing for each eligible module when invoked by Maven's reactor.")
+    Component(class_tools, "ClassFunctionalTools", "AI function-tool adapter", "Exposes class discovery and class-metadata functions to AI workflows and caches one metadata holder per Maven project.")
+    Component(class_info_holder, "ClassInfoHolder", "Class metadata index", "Lazily builds a project class loader and indexes visible classes, class paths, dependency coordinates, and matching project source paths.")
 }
 
 Container_Boundary(ghostwriter, "Machai Ghostwriter / Processor Libraries") {
@@ -46,6 +46,7 @@ Container_Boundary(ghostwriter, "Machai Ghostwriter / Processor Libraries") {
 }
 
 Rel(developer, maven, "Invokes", "mvn gw:gw / gw:act")
+Rel(developer, project_files, "Maintains project sources, instructions, and act definitions")
 Rel(maven, gw_mojo, "Executes and injects context")
 Rel(maven, act_mojo, "Executes and injects context")
 Rel(maven, gw_per_module_mojo, "Executes per-module goal")
@@ -53,8 +54,8 @@ Rel(maven, act_per_module_mojo, "Executes per-module goal")
 Rel(maven, maven_reactor, "Builds and coordinates modules")
 Rel(gw_mojo, maven_reactor, "Reads module graph")
 Rel(act_mojo, maven_reactor, "Reads module graph")
-Rel(maven_reactor, gw_per_module_mojo, "Invokes in dependency order")
-Rel(maven_reactor, act_per_module_mojo, "Invokes in dependency order")
+Rel(maven_reactor, gw_per_module_mojo, "Invokes once per module in dependency order")
+Rel(maven_reactor, act_per_module_mojo, "Invokes eligible goals in dependency order")
 Rel(maven, dependency_artifacts, "Resolves compile dependencies")
 Rel(maven_settings, abstract_gw_mojo, "Supplies server credentials")
 Rel(abstract_act_mojo, prompter, "Requests input when no act is configured")
