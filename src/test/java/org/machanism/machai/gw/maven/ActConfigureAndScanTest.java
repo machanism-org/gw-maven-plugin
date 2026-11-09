@@ -25,8 +25,7 @@ public class ActConfigureAndScanTest {
 		boolean scanDocumentsCalled;
 
 		@Override
-		protected void applyActPrompt(org.machanism.macha.core.commons.configurator.Configurator conf)
-				throws org.apache.maven.plugin.MojoExecutionException {
+		protected void applyActPrompt(org.machanism.macha.core.commons.configurator.Configurator conf) {
 			applyActPromptCalled = true;
 			super.applyActPrompt(conf);
 		}

@@ -8,7 +8,6 @@ import java.util.Properties;
 
 import org.apache.maven.execution.DefaultMavenExecutionRequest;
 import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
 import org.junit.jupiter.api.Test;
@@ -71,7 +70,7 @@ public class ActApplyActPromptTest {
 	}
 
 	@Test
-	public void applyActPrompt_whenPrompterFails_wrapsInMojoExecutionException() throws Exception {
+	public void applyActPrompt_whenPrompterFails_wrapsInIllegalArgumentException() throws Exception {
 		ActMojo act = newAct(Mockito.mock(Prompter.class));
 		act.setSession(newSession(new Properties()));
 
@@ -82,8 +81,8 @@ public class ActApplyActPromptTest {
 
 		try {
 			act.applyActPrompt(conf);
-			fail("Expected MojoExecutionException");
-		} catch (MojoExecutionException e) {
+			fail("Expected IllegalArgumentException");
+		} catch (IllegalArgumentException e) {
 			assertTrue(e.getMessage().contains(GWConstants.ACT_PROP_NAME));
 			assertTrue(e.getCause() instanceof PrompterException);
 		}

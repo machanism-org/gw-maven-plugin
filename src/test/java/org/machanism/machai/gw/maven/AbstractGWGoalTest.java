@@ -86,7 +86,7 @@ public class AbstractGWGoalTest {
 	}
 
 	@Test
-	public void getConfiguration_whenServerIdProvidedButServerMissing_throwsMojoExecutionException() throws Exception {
+	public void getConfiguration_whenServerIdProvidedButServerMissing_throwsIllegalArgumentException() throws Exception {
 		TestGoal goal = new TestGoal();
 		Settings settings = new Settings();
 		setField(goal, "settings", settings);
@@ -94,8 +94,8 @@ public class AbstractGWGoalTest {
 
 		try {
 			goal.getConfiguration();
-			fail("Expected MojoExecutionException");
-		} catch (MojoExecutionException e) {
+			fail("Expected IllegalArgumentException");
+		} catch (IllegalArgumentException e) {
 			assertEquals("No <server> with id 'missing' found in Maven settings.xml.", e.getMessage());
 		}
 	}

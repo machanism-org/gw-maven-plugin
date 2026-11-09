@@ -146,12 +146,11 @@ public abstract class AbstractActMojo extends AbstractGWMojo {
 	 *
 	 * @param actPrompt configured act prompt, or {@code null} to resolve one from
 	 *                  Maven properties, configuration, or interactive input
-	 * @throws MojoExecutionException      if configuration, prompting, or file
-	 *                                     processing fails
+	 * @throws IOException 
 	 * @throws ProcessTerminationException if processing requests abnormal
 	 *                                     termination with a non-zero exit code
 	 */
-	public void performAct(String actPrompt) throws MojoExecutionException {
+	public void performAct(String actPrompt) throws IOException {
 		PropertiesConfigurator configuration = getConfiguration();
 		Boolean interactive = configuration.getBoolean(GWConstants.INTERACTIVE_MODE_PROP_NAME, null);
 
@@ -228,7 +227,15 @@ public abstract class AbstractActMojo extends AbstractGWMojo {
 		try {
 			UsageStatistics.init();
 
-			process(actProcessor, actPrompt);
+			try {
+				process(actProcessor, actPrompt);
+			} catch (ActNotFoundException e) {
+				getLog().info("Act not found: " + e.getMessage());
+			} catch (ProcessTerminationException | EndTaskException e) {
+				throw e;
+			} catch (Exception e) {
+				getLog().info("Act processing failed.", e);
+			}
 			while (actPrompt == null) {
 				Properties userProperties = session.getUserProperties();
 				userProperties.remove(GWConstants.ACT_PROP_NAME);
@@ -263,26 +270,22 @@ public abstract class AbstractActMojo extends AbstractGWMojo {
 	 * @throws MojoExecutionException if scanning fails because of I/O errors;
 	 *                                prompt failures are propagated by invoked
 	 *                                configuration methods
+	 * @throws IOException
 	 */
-	protected void process(ActProcessor actProcessor, String actPrompt) throws MojoExecutionException {
-		try {
-			String actsLocation = this.acts;
-			if (actsLocation == null) {
-				actsLocation = actProcessor.getConfigurator().get(GWConstants.ACTS_LOCATION_PROP_NAME, null);
-			}
-
-			if (StringUtils.isNotEmpty(actsLocation)) {
-				logger.info("Custom acts location specified: {}", actsLocation);
-				actProcessor.setActsLocation(actsLocation);
-			}
-
-			applyExcludes(actProcessor);
-
-			configureAndScan(actProcessor, actPrompt);
-		} catch (IOException e) {
-			getLog().error("Processing failed.", e);
-			throw new MojoExecutionException("I/O error occurred during file processing", e);
+	protected void process(ActProcessor actProcessor, String actPrompt) throws IOException {
+		String actsLocation = this.acts;
+		if (actsLocation == null) {
+			actsLocation = actProcessor.getConfigurator().get(GWConstants.ACTS_LOCATION_PROP_NAME, null);
 		}
+
+		if (StringUtils.isNotEmpty(actsLocation)) {
+			logger.info("Custom acts location specified: {}", actsLocation);
+			actProcessor.setActsLocation(actsLocation);
+		}
+
+		applyExcludes(actProcessor);
+
+		configureAndScan(actProcessor, actPrompt);
 	}
 
 	/**
@@ -294,8 +297,7 @@ public abstract class AbstractActMojo extends AbstractGWMojo {
 	 * @throws MojoExecutionException if interactive prompt collection fails
 	 * @throws IOException            if document scanning fails
 	 */
-	public void configureAndScan(ActProcessor actProcessor, String savedAct)
-			throws MojoExecutionException, IOException {
+	public void configureAndScan(ActProcessor actProcessor, String savedAct) throws IOException {
 		if (savedAct == null) {
 			applyActPrompt(actProcessor.getConfigurator());
 			Properties userProperties = session.getUserProperties();
@@ -318,7 +320,7 @@ public abstract class AbstractActMojo extends AbstractGWMojo {
 	 *             prompting
 	 * @throws MojoExecutionException if interactive prompt collection fails
 	 */
-	protected void applyActPrompt(Configurator conf) throws MojoExecutionException {
+	protected void applyActPrompt(Configurator conf) {
 		synchronized (MONITOR) {
 			try {
 				Properties userProperties = session.getUserProperties();
@@ -337,7 +339,7 @@ public abstract class AbstractActMojo extends AbstractGWMojo {
 					logger.info("Act: {}", savedAct);
 				}
 			} catch (PrompterException e) {
-				throw new MojoExecutionException(
+				throw new IllegalArgumentException(
 						"Failed to read '" + GWConstants.ACT_PROP_NAME + "' prompt interactively.", e);
 			}
 		}

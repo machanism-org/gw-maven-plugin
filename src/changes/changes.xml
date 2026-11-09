@@ -3,6 +3,16 @@
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/changes/2.0.0 https://maven.apache.org/xsd/changes-2.0.0.xsd">
   <body>
+    <release version="1.4.3" date="2026-11-08" description="Improves error handling during Maven act execution and task completion.">
+      <action dev="dev" type="fix">Handled failures during Maven act processing without losing useful error details.</action>
+      <action dev="dev" type="fix">Treated an end-task signal as successful completion instead of a Maven execution failure.</action>
+    </release>
+    
+    <release version="1.4.2" date="2026-10-23" description="Updates class inspection interfaces and Maven process tool integrations.">
+      <action dev="dev" type="update">Renamed class inspection tool names and parameters to use consistent underscore conventions.</action>
+      <action dev="dev" type="update">Updated Maven process tool integrations to use the revised process manager and provider packages.</action>
+    </release>
+
     <release version="1.4.0" date="2026-09-01">
       <action dev="dev" type="update">Renamed tools and parameters to kebab-case names for consistent command and tool interfaces.</action>
     </release>
@@ -19,11 +29,6 @@
       <!-- Improvements (mapped to 'update'/'add') -->
       <action dev="dev" type="update">Class Diagnostics: Improved class information retrieval through get_class_info.</action>
       <action dev="dev" type="update">Logging: Improved log output, including default model and thread-count messages.</action>
-    </release>
-
-    <release version="1.4.2" date="2026-10-23" description="Updates class inspection interfaces and Maven process tool integrations.">
-      <action dev="dev" type="update">Renamed class inspection tool names and parameters to use consistent underscore conventions.</action>
-      <action dev="dev" type="update">Updated Maven process tool integrations to use the revised process manager and provider packages.</action>
     </release>
   </body>
 </document>

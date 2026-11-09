@@ -28,7 +28,7 @@ public class ActProcessTest {
 		boolean configureAndScanCalled;
 
 		@Override
-		public void configureAndScan(ActProcessor actProcessor, String actPrompt) throws MojoExecutionException, IOException {
+		public void configureAndScan(ActProcessor actProcessor, String actPrompt) throws IOException {
 			configureAndScanCalled = true;
 		}
 	}
@@ -94,13 +94,13 @@ public class ActProcessTest {
 	}
 
 	@Test
-	public void process_whenConfigureAndScanThrowsIOException_wrapsIntoMojoExecutionException() throws Exception {
+	public void process_whenConfigureAndScanThrowsIOException_propagatesIOException() throws Exception {
 		ActMojo act = new ActMojo() {
 			{
 				setPrompter(Mockito.mock(Prompter.class));
 			}
 			@Override
-			public void configureAndScan(ActProcessor actProcessor, String actPrompt) throws MojoExecutionException, IOException {
+			public void configureAndScan(ActProcessor actProcessor, String actPrompt) throws IOException {
 				throw new IOException("boom");
 			}
 		};
@@ -108,10 +108,9 @@ public class ActProcessTest {
 
 		try {
 			act.process(processor, null);
-			fail("Expected MojoExecutionException");
-		} catch (MojoExecutionException e) {
-			assertTrue(e.getMessage().contains("I/O error occurred during file processing"));
-			assertTrue(e.getCause() instanceof IOException);
+			fail("Expected IOException");
+		} catch (IOException e) {
+			assertEquals("boom", e.getMessage());
 		}
 	}
 }

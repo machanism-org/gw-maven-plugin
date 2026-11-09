@@ -1,6 +1,8 @@
 /* @guidance: >>> ${guidances}/def-class-javadoc.md */
 package org.machanism.machai.gw.maven;
 
+import java.io.IOException;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -83,8 +85,12 @@ public class ActPerModuleMojo extends AbstractActPerModuleMojo {
 	 *         failure
 	 */
 	@Override
-	public void execute() throws MojoExecutionException, MojoFailureException {
-		performAct(act);
+	public void execute() throws MojoExecutionException {
+		try {
+			performAct(act);
+		} catch (IOException e) {
+			throw new MojoExecutionException("Execution failed.", e);
+		}
 	}
 
 }

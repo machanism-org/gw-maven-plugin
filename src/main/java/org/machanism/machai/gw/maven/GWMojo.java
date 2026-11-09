@@ -3,6 +3,7 @@ package org.machanism.machai.gw.maven;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -145,7 +146,12 @@ public class GWMojo extends AbstractGWMojo {
 	public void execute() throws MojoExecutionException {
 		UsageStatistics.init();
 
-		PropertiesConfigurator config = getConfiguration();
+		PropertiesConfigurator config;
+		try {
+			config = getConfiguration();
+		} catch (IOException e) {
+			throw new MojoExecutionException("Execution failed.", e);
+		}
 
 		String model = config.get(GWConstants.MODEL_PROP_NAME, this.model);
 		GuidanceProcessor processor = new GuidanceProcessor(basedir, model, config) {

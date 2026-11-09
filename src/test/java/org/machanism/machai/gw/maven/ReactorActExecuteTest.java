@@ -35,10 +35,9 @@ public class ReactorActExecuteTest {
 		}
 
 		@Override
-		protected void applyActPrompt(org.machanism.macha.core.commons.configurator.Configurator conf)
-				throws MojoExecutionException {
+		protected void applyActPrompt(org.machanism.macha.core.commons.configurator.Configurator conf) {
 			if (failApply) {
-				throw new MojoExecutionException("boom");
+				throw new IllegalArgumentException("boom");
 			}
 		}
 
@@ -71,7 +70,7 @@ public class ReactorActExecuteTest {
 	}
 
 	@Test
-	public void execute_whenApplyActPromptFails_throwsMojoExecutionException() throws Exception {
+	public void execute_whenApplyActPromptFails_propagatesIllegalArgumentException() throws Exception {
 		CapturingActPerModuleMojo goal = new CapturingActPerModuleMojo();
 		goal.failApply = true;
 		File basedir = new File(".").getCanonicalFile();
@@ -85,8 +84,8 @@ public class ReactorActExecuteTest {
 
 		try {
 			goal.execute();
-			fail("Expected MojoExecutionException");
-		} catch (MojoExecutionException e) {
+			fail("Expected IllegalArgumentException");
+		} catch (IllegalArgumentException e) {
 			assertTrue(e.getMessage().contains("boom"));
 		}
 	}

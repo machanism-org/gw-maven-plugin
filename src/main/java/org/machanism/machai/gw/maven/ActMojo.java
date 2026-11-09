@@ -199,6 +199,8 @@ public class ActMojo extends AbstractActMojo {
 			performAct(act);
 		} catch (EndTaskException e) {
 			getLog().info(e.getMessage());
+		} catch (Exception e) {
+			throw new MojoExecutionException("Execution failed.", e);
 		}
 	}
 

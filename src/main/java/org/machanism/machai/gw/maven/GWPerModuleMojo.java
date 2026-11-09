@@ -36,8 +36,8 @@ import org.machanism.machai.project.layout.ProjectLayout;
  *
  * <p>
  * The processor's {@code processModule} hook is intentionally disabled for this
- * goal. Maven's reactor, rather than recursive processor calls, invokes the goal
- * for every selected module in dependency order.
+ * goal. Maven's reactor, rather than recursive processor calls, invokes the
+ * goal for every selected module in dependency order.
  * </p>
  *
  * <p>
@@ -152,7 +152,7 @@ public class GWPerModuleMojo extends AbstractGWMojo {
 
 	/**
 	 * Executes the guidance processor for this reactor module.
-
+	 * 
 	 * <p>
 	 * The method initializes usage tracking, resolves workflow configuration, and
 	 * scans this module's base directory unless {@code path} overrides it. When a
@@ -168,7 +168,12 @@ public class GWPerModuleMojo extends AbstractGWMojo {
 		UsageStatistics.init();
 		String executionRootDirectory = session.getExecutionRootDirectory();
 
-		PropertiesConfigurator config = getConfiguration();
+		PropertiesConfigurator config;
+		try {
+			config = getConfiguration();
+		} catch (IOException e) {
+			throw new MojoExecutionException("Execution failed.", e);
+		}
 
 		String model = config.get(GWConstants.MODEL_PROP_NAME, this.model);
 		GuidanceProcessor processor = new GuidanceProcessor(new File(executionRootDirectory), model, config) {

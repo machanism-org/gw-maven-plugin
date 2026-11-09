@@ -40,12 +40,13 @@ public abstract class AbstractActPerModuleMojo extends AbstractActMojo {
 	 *
 	 * @param actPrompt prompt supplied directly for the act, or {@code null} to load
 	 *                  the configured prompt
+	 * @throws IOException 
 	 * @throws MojoExecutionException if configuration, prompting, or processing
 	 *                                fails
 	 * @throws ProcessTerminationException if processing requests termination with a
 	 *                                    non-zero exit code
 	 */
-	public void performAct(String actPrompt) throws MojoExecutionException {
+	public void performAct(String actPrompt) throws IOException {
 		UsageStatistics.init();
 
 		List<MavenProject> modules = session.getAllProjects();

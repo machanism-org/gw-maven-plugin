@@ -190,12 +190,13 @@ public abstract class AbstractGWMojo extends AbstractMojo {
 	 * </p>
 	 *
 	 * @return a configurator containing the resolved workflow properties
+	 * @throws IOException
 	 * @throws MojoExecutionException if a specified configuration file cannot be
 	 *                                loaded, Maven settings are unavailable for a
 	 *                                configured server id, or that server cannot be
 	 *                                found
 	 */
-	protected PropertiesConfigurator getConfiguration() throws MojoExecutionException {
+	protected PropertiesConfigurator getConfiguration() throws IOException {
 
 		PropertiesConfigurator config = new PropertiesConfigurator();
 
@@ -205,18 +206,19 @@ public abstract class AbstractGWMojo extends AbstractMojo {
 			logger.info("Custom configuration: {}", configPath);
 		} catch (IOException e) {
 			if (configFile != null) {
-				throw new MojoExecutionException("Failed to load configuration from: " + configFile, e);
+				throw new IOException("Failed to load configuration from: " + configFile);
 			}
 		}
 
 		if (serverId != null) {
 			if (settings == null) {
-				throw new MojoExecutionException("Maven settings are not available.");
+				throw new IllegalArgumentException("Maven settings are not available.");
 			}
 
 			Server server = settings.getServer(serverId);
 			if (server == null) {
-				throw new MojoExecutionException("No <server> with id '" + serverId + "' found in Maven settings.xml.");
+				throw new IllegalArgumentException(
+						"No <server> with id '" + serverId + "' found in Maven settings.xml.");
 			}
 
 			String username = server.getUsername();
