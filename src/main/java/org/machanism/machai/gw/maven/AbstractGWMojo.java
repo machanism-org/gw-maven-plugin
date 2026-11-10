@@ -206,7 +206,7 @@ public abstract class AbstractGWMojo extends AbstractMojo {
 			logger.info("Custom configuration: {}", configPath);
 		} catch (IOException e) {
 			if (configFile != null) {
-				throw new IOException("Failed to load configuration from: " + configFile);
+				throw e;
 			}
 		}
 

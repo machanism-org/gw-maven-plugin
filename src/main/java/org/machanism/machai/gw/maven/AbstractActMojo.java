@@ -146,7 +146,7 @@ public abstract class AbstractActMojo extends AbstractGWMojo {
 	 *
 	 * @param actPrompt configured act prompt, or {@code null} to resolve one from
 	 *                  Maven properties, configuration, or interactive input
-	 * @throws IOException 
+	 * @throws IOException
 	 * @throws ProcessTerminationException if processing requests abnormal
 	 *                                     termination with a non-zero exit code
 	 */
