@@ -5,7 +5,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.machanism.machai.gw.processor.ActProcessor;
-import org.machanism.machai.gw.tools.EndTaskException;
+import org.machanism.machai.process.tools.EndTaskException;
 
 /*@guidance:
  * # Generate detailed Javadoc documentation for the Maven plugin, including:

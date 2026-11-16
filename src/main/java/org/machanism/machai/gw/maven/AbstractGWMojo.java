@@ -21,9 +21,9 @@ import org.machanism.machai.gw.maven.tools.ClassFunctionalTools;
 import org.machanism.machai.gw.processor.AbstractFileProcessor;
 import org.machanism.machai.gw.processor.GWConstants;
 import org.machanism.machai.gw.processor.GuidanceProcessor;
-import org.machanism.machai.gw.tools.EndTaskException;
 import org.machanism.machai.process.manager.UsageStatistics;
 import org.machanism.machai.process.provider.AbstractAIProvider;
+import org.machanism.machai.process.tools.EndTaskException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
