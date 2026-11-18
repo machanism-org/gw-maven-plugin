@@ -6,6 +6,10 @@
     <release version="1.4.3" date="2026-11-08" description="Improves error handling during Maven act execution and task completion.">
       <action dev="dev" type="fix">Handled failures during Maven act processing without losing useful error details.</action>
       <action dev="dev" type="fix">Treated an end-task signal as successful completion instead of a Maven execution failure.</action>
+      <action dev="dev" type="fix">Preserved act processing behavior across retries and cancellation while maintaining prompts and usage tracking.</action>
+      <action dev="dev" type="fix">Preserved act processing failures and configuration loading errors through Maven goal completion.</action>
+      <action dev="dev" type="fix">Handled end-task signals from process tools as successful completion.</action>
+      <action dev="dev" type="fix">Included I/O exception details and clarified custom configuration messages in processing logs.</action>
     </release>
     
     <release version="1.4.2" date="2026-10-23" description="Updates class inspection interfaces and Maven process tool integrations.">
