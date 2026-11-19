@@ -8,19 +8,22 @@
 	<parent>
 		<groupId>org.machanism.machai</groupId>
 		<artifactId>machai</artifactId>
-		<version>1.4.3</version>
+		<version>1.4.4-SNAPSHOT</version>
 	</parent>
 	<packaging>maven-plugin</packaging>
 
 	<artifactId>gw-maven-plugin</artifactId>
 	<name>GW Maven Plugin</name>
+	
+	<!-- @guidance: Summarize the `src/site/markdown/index.md` introduction
+	section and put this conten to the `description` tag.  -->
 	<description>
-		Ghostwriter Maven Plugin is an advanced documentation automation tool
-		for Java projects. It automatically scans, analyzes, and assembles
-		project documentation using embedded guidance tags and AI-powered
-		synthesis. The plugin streamlines the creation and maintenance of
-		high-quality, consistent documentation, ensuring best practices and
-		up-to-date information across all modules.
+		The GW Maven Plugin is the primary Maven adapter for Machai Ghostwriter,
+		enabling guided, AI-assisted processing of source code, tests,
+		documentation, site content, configuration, and other project files.
+		Its guidance and act goals help teams maintain and transform project
+		content within Maven workflows, with support for project-wide and
+		per-module execution.
 	</description>
 
 	<properties>
@@ -47,7 +50,7 @@
 		<dependency>
 			<groupId>org.machanism.machai</groupId>
 			<artifactId>ghostwriter</artifactId>
-			<version>1.4.3</version>
+			<version>1.4.4-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
