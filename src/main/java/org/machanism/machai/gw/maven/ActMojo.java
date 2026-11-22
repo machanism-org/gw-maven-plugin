@@ -176,7 +176,7 @@ public class ActMojo extends AbstractActMojo {
 	 * @param model              model used to identify the reactor project
 	 */
 	@Override
-	protected void updateMavenProjectLayout(org.machanism.machai.project.layout.MavenProjectLayout mavenProjectLayout,
+	protected void updateMavenProjectLayout(org.machanism.machai.projectlayout.mvn.MavenProjectLayout mavenProjectLayout,
 			org.apache.maven.model.Model model) {
 		super.updateMavenProjectLayout(mavenProjectLayout, model);
 	}

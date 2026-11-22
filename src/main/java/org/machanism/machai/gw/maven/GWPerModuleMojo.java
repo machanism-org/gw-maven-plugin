@@ -20,9 +20,9 @@ import org.machanism.machai.gw.processor.GWConstants;
 import org.machanism.machai.gw.processor.GuidanceProcessor;
 import org.machanism.machai.gw.tools.ProcessTerminationException;
 import org.machanism.machai.process.manager.UsageStatistics;
-import org.machanism.machai.project.ProjectLayoutManager;
-import org.machanism.machai.project.layout.MavenProjectLayout;
-import org.machanism.machai.project.layout.ProjectLayout;
+import org.machanism.machai.projectlayout.ProjectLayout;
+import org.machanism.machai.projectlayout.ProjectLayoutManager;
+import org.machanism.machai.projectlayout.mvn.MavenProjectLayout;
 
 /**
  * Maven goal that processes documents for the current Maven module.

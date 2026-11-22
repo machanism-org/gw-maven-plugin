@@ -8,8 +8,8 @@ import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.Test;
 import org.machanism.macha.core.commons.configurator.PropertiesConfigurator;
 import org.machanism.machai.gw.processor.GuidanceProcessor;
-import org.machanism.machai.project.layout.MavenProjectLayout;
-import org.machanism.machai.project.layout.ProjectLayout;
+import org.machanism.machai.projectlayout.ProjectLayout;
+import org.machanism.machai.projectlayout.mvn.MavenProjectLayout;
 
 class ReactorGWGetProjectLayoutTest {
 

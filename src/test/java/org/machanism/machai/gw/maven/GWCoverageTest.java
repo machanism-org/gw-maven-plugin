@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.machanism.macha.core.commons.configurator.PropertiesConfigurator;
 import org.machanism.machai.gw.processor.GuidanceProcessor;
 import org.machanism.machai.gw.tools.ProcessTerminationException;
-import org.machanism.machai.project.layout.ProjectLayout;
+import org.machanism.machai.projectlayout.ProjectLayout;
 
 public class GWCoverageTest {
 
