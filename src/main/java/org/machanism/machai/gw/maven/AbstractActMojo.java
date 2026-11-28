@@ -29,6 +29,7 @@ import org.machanism.machai.gw.tools.ProcessTerminationException;
 import org.machanism.machai.process.manager.UsageStatistics;
 import org.machanism.machai.process.provider.AbstractAIProvider;
 import org.machanism.machai.process.tools.EndTaskException;
+import org.machanism.machai.process.tools.ErrorResultException;
 import org.machanism.machai.projectlayout.ProjectLayout;
 import org.machanism.machai.projectlayout.mvn.MavenProjectLayout;
 
@@ -233,6 +234,8 @@ public abstract class AbstractActMojo extends AbstractGWMojo {
 				getLog().info("Act not found: " + e.getMessage());
 			} catch (ProcessTerminationException | EndTaskException e) {
 				throw e;
+			} catch (ErrorResultException e) {
+				getLog().info(AIFileProcessor.prettyPrintIfJson(e.getMessage()));
 			} catch (Exception e) {
 				getLog().info("Act processing failed.", e);
 			}
@@ -246,6 +249,8 @@ public abstract class AbstractActMojo extends AbstractGWMojo {
 					getLog().info("Act not found: " + e.getMessage());
 				} catch (ProcessTerminationException | EndTaskException e) {
 					throw e;
+				} catch (ErrorResultException e) {
+					getLog().info(AIFileProcessor.prettyPrintIfJson(e.getMessage()));
 				} catch (Exception e) {
 					getLog().info("Act processing failed.", e);
 				}

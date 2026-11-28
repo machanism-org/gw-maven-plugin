@@ -132,6 +132,8 @@ public class ClassInfoHolder {
 			ClassPath classPath = ClassPath.from(classLoader);
 			classes = classPath.getAllClasses();
 
+		} catch (RuntimeException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -152,6 +154,8 @@ public class ClassInfoHolder {
 			scanClassesByPath(outputDirectory, null);
 			scanClassesByPath(artifacts);
 
+		} catch (RuntimeException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -201,7 +205,7 @@ public class ClassInfoHolder {
 	/**
 	 * Reads potential class entries from a directory or jar artifact.
 	 *
-	 * @param path path to scan
+	 * @param path     path to scan
 	 * @param artifact file representation of {@code path}
 	 * @return candidate class-entry paths
 	 * @throws IOException if the directory or jar cannot be read
@@ -219,7 +223,7 @@ public class ClassInfoHolder {
 	/**
 	 * Adds all entries from a jar artifact to the supplied collection.
 	 *
-	 * @param artifact jar file to read
+	 * @param artifact  jar file to read
 	 * @param classList destination collection
 	 * @throws IOException if the jar cannot be read
 	 */
@@ -232,7 +236,7 @@ public class ClassInfoHolder {
 	/**
 	 * Recursively adds compiled-class entries found beneath a directory.
 	 *
-	 * @param path directory to scan
+	 * @param path      directory to scan
 	 * @param classList destination collection
 	 * @throws IOException if the directory cannot be traversed
 	 */
@@ -246,11 +250,11 @@ public class ClassInfoHolder {
 	}
 
 	/**
-	 * Loads and records a class entry when it is visible and has an eligible
-	 * access level.
+	 * Loads and records a class entry when it is visible and has an eligible access
+	 * level.
 	 *
 	 * @param path classpath location containing the entry
-	 * @param id artifact coordinates, or {@code null} for project output
+	 * @param id   artifact coordinates, or {@code null} for project output
 	 * @param name class-entry path
 	 */
 	private void processClassEntry(String path, String id, String name) {
@@ -271,8 +275,8 @@ public class ClassInfoHolder {
 	}
 
 	/**
-	 * Determines whether an archive or directory entry represents a supported
-	 * Java class.
+	 * Determines whether an archive or directory entry represents a supported Java
+	 * class.
 	 *
 	 * @param name entry path
 	 * @return {@code true} for a non-module class entry outside {@code META-INF}
@@ -302,7 +306,7 @@ public class ClassInfoHolder {
 	 * @param className the regular expression applied to simple class names
 	 * @return matching class metadata entries
 	 * @throws java.util.regex.PatternSyntaxException if {@code className} is not a
-	 *                                                 valid regular expression
+	 *                                                valid regular expression
 	 */
 	public List<ClassInfo> findClasses(String className) {
 		init();
